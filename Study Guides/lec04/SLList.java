@@ -2,7 +2,7 @@
 
 /** An SLList is a list of integers, which hides the terrible truth
    * of the nakedness within. */
-class SLList {	
+public class SLList {	
 	private static class IntNode {
 		public int item;
 		public IntNode next;

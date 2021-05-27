@@ -1,6 +1,6 @@
 // https://fa20.datastructur.es/materials/discussion/disc01.pdf
 
-/* 2. Mystery; The mystery method takes in an interger array and an integer k
+/* 2. Mystery; The mystery method takes in an integer array and an integer k
     and returns the index of the smallest number in the subarray starting at index k and going to the end.
     
     For the given input, the mystery function would return 4,
@@ -16,7 +16,7 @@
 // 3. Fib
 
 /** Returns the nth Fibonacci number. */
-public class Disc1 {
+public class Disc01 {
     public static int fib(int n) {
         int current = 0;
         int next = 1;
@@ -31,7 +31,7 @@ public class Disc1 {
     }
 
     /** Returns the nth Fibonacci number using a recursive solution.
-        @param nth fibonacci number
+      *  @param n fibonacci number
         @param k index of current fibonacci number
         @param f0 current fibonacci number
         @param f1 next fibonacci number

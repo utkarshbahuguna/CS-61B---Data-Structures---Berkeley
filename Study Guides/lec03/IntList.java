@@ -3,7 +3,7 @@
    https://www.kartikkapur.com/documents/mt1.pdf#page=7
  */
 
-class IntList {
+public class IntList {
 	public int first;
 	public IntList rest;
 
