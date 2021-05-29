@@ -1,3 +1,5 @@
+// https://fa20.datastructur.es/materials/proj/proj1a/proj1a
+
 /** A AList implementation of a double ended queue (deque). */
 public class ArrayDeque<T> {
     private T[] items;      // array holding the items of the deque

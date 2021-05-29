@@ -1,37 +1,48 @@
 // https://fa20.datastructur.es/materials/proj/proj1a/proj1a
 
 /** A DLList implementation of a double ended queue (deque). */
-public class LinkedListDeque<T> {
+public class LinkedListDeque {
 
     /** A doubly-linked node in the DLList. */
     private class DNode {
-        public T value;
+        public Object value;
         public DNode prev;
         public DNode next;
 
         /** Creates a DNode. */
-        public DNode(T value, DNode prev, DNode next) {
+        public DNode(Object value, DNode prev, DNode next) {
             this.value = value;
             this.prev = prev;
             this.next = next;
         }
 
         /* Creates a DNode with prev and next as null. */
-        public DNode(T value) {
+        public DNode(Object value) {
             this(value, null, null);            //Method overloading.
         }
     }
 
     private int size;
-    private DNode sentinel;         //The first DNode is always at sentinel.next and the last DNode at sentinel.prev. The next of the last element is the sentinel.
+    private DNode sentinel;         // The first DNode is always at sentinel.next and the last DNode at sentinel.prev. The next of the last element is the sentinel.
 
     /** Creates an empty linked list deque. */
-    public LinkedListDeque() {
+    public LinkedListDeque() {          // Constructor Overloading
+        this(new Object[0]);
+    }
+
+    /** Creates a deque with arbitrary number of elements. */
+    public LinkedListDeque(Object ... args) {
         sentinel = new DNode(null);
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
-
         size = 0;
+
+        for (Object element : args) {
+            DNode last = new DNode(element, sentinel.prev, sentinel);
+            sentinel.prev.next = last;
+            sentinel.prev = last;
+            size = size + 1;
+        }
     }
 
     /** Returns true if deque is empty, false otherwise. */
@@ -56,7 +67,7 @@ public class LinkedListDeque<T> {
     }
 
     /** Adds an item of type T to the front of the deque. */
-    public void addFirst(T item) {
+    public void addFirst(Object item) {
         DNode first =  new DNode(item, sentinel, sentinel.next);
         sentinel.next.prev = first;
         sentinel.next = first;
@@ -65,7 +76,7 @@ public class LinkedListDeque<T> {
     }
 
     /** Adds an item of type T to the back of the deque. */
-    public void addLast(T item) {
+    public void addLast(Object item) {
         DNode last = new DNode(item, sentinel.prev, sentinel);
         sentinel.prev.next = last;
         sentinel.prev = last;
@@ -74,7 +85,7 @@ public class LinkedListDeque<T> {
     }
 
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
-    public T removeFirst() {
+    public Object removeFirst() {
         DNode first = sentinel.next;
         first.next.prev = sentinel;
         sentinel.next = first.next;
@@ -85,7 +96,7 @@ public class LinkedListDeque<T> {
     }
 
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
-    public T removeLast() {
+    public Object removeLast() {
         DNode last = sentinel.prev;
         last.prev.next = sentinel;
         sentinel.prev = last.prev;
@@ -96,7 +107,7 @@ public class LinkedListDeque<T> {
     }
 
     /** Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. If no such item exists, returns null. */
-    public T get(int index) {
+    public Object get(int index) {
         if (index >= size) {
             return null;
         } else {
@@ -110,7 +121,7 @@ public class LinkedListDeque<T> {
 
     /** Helper function for getRecursive.
      * Gets the item at ith position starting from the given node. node is the 0th position, node.next is the 1st position, and so on. */
-    private T getDNodeRecursion(DNode node, int i) {
+    private Object getDNodeRecursion(DNode node, int i) {
         if (i == 0) {
             return node.value;
         } else {
@@ -119,12 +130,22 @@ public class LinkedListDeque<T> {
     }
 
     /** Same as get, but uses recursion. */
-    public T getRecursive(int index) {
+    public Object getRecursive(int index) {
         assert index >= 0 : "Index cannot be negative";
         if (index >= size) {
             return null;
         } else {
             return getDNodeRecursion(sentinel.next, index);
         }
+    }
+
+    public static void main(String[] args) {
+        LinkedListDeque d1 = new LinkedListDeque("i", "am", "nice", "person");
+        LinkedListDeque d2 = new LinkedListDeque(6, 7, 3, 4, 5);
+        LinkedListDeque d3 = new LinkedListDeque();
+
+        d1.printDeque();
+        d2.printDeque();
+        d3.printDeque();
     }
 }
