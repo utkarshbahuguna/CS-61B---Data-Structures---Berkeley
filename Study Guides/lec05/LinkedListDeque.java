@@ -37,11 +37,8 @@ public class LinkedListDeque {
         sentinel.prev = sentinel;
         size = 0;
 
-        for (Object element : args) {
-            DNode last = new DNode(element, sentinel.prev, sentinel);
-            sentinel.prev.next = last;
-            sentinel.prev = last;
-            size = size + 1;
+        for (Object item : args) {
+            addLast(item);
         }
     }
 

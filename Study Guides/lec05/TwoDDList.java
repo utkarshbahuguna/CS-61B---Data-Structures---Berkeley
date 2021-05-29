@@ -41,10 +41,7 @@ public class TwoDDList {
         size = 0;
 
         for (LinkedListDeque DList : args) {
-            DNode last = new DNode(DList, sentinel.prev, sentinel);
-            sentinel.prev.next = last;
-            sentinel.prev = last;
-            size = size + 1;
+            addLast(DList);
         }
     }
 
