@@ -141,7 +141,35 @@ public class TwoDDList {
         }
     }
 
-//    public void addUniform()
+    /** Returns true if an item can be uniformly added to the DList at index i.
+     * Uniform addition means that no DList in the 2DDList will have a size greater than any other by more than 1 element. */
+    private boolean canUniformlyAdd (int index) {
+        LinkedListDeque d = get(index);
+        for (int j = 0; j < size; j++) {
+            if (d.size() - get(j).size() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Returns the index of the next DList in the 2DDList. If i is the last DList, returns 0. */
+    private int nextDListIndex(int i) {
+        if (i == this.size - 1) {
+            return 0;
+        } else {
+            return i + 1;
+        }
+    }
+
+    /** Tries to add item to ith DList, if the length of ith DList is greater than any other DList by 1, tries to add the item to the next DList with the same constraints. */
+    public void addUniform(Object item, int i) {
+        if (canUniformlyAdd(i)) {
+            get(i).addLast(item);
+        } else {
+            addUniform(item, nextDListIndex(i));
+        }
+    }
 
     public static void main(String[] args) {
         LinkedListDeque a = new LinkedListDeque("i", "am", "nice", "person");
@@ -150,6 +178,11 @@ public class TwoDDList {
 
         TwoDDList d = new TwoDDList(a, b, c);
         TwoDDList d1 = new TwoDDList();
+        d.printTwoDDList();
+
+        for(int i = 10; i <= 100; i = i + 10) {
+            d.addUniform(i, 0);
+        }
         d.printTwoDDList();
     }
 }
