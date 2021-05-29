@@ -19,6 +19,15 @@ public class LinkedListDequeTest {
 		return true;
 	}
 
+
+	public static boolean checkEquals(Object expected, Object actual) {
+		if (!expected.equals(actual)) {
+			System.out.println("Got " + actual + ", but expected: " + expected);
+			return false;
+		}
+		return true;
+	}
+
 	/* Prints a nice message based on whether a test passed. 
 	 * The \n means newline. */
 	public static void printTestStatus(boolean passed) {
@@ -35,8 +44,7 @@ public class LinkedListDequeTest {
 	  * && is the "and" operation. */
 	public static void addIsEmptySizeTest() {
 		System.out.println("Running add/isEmpty/Size test.");
-		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
+
 		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -54,11 +62,25 @@ public class LinkedListDequeTest {
 		lld1.addLast("back");
 		passed = checkSize(3, lld1.size()) && passed;
 
+		lld1.addLast("last");
+		passed = checkSize(4, lld1.size()) && passed;
+
+		String last = lld1.removeLast();
+		passed = checkSize(3, lld1.size()) && passed;
+		passed = checkEquals("last", last) && passed;
+
 		System.out.println("Printing out deque: ");
 		lld1.printDeque();
 
+		String b = lld1.get(2);
+		passed = checkEquals("back", b) && passed;
+
+		lld1.printDeque();
+		b = lld1.getRecursive(2);
+		passed = checkEquals("back", b) && passed;
+
 		printTestStatus(passed);
-		*/
+
 	}
 
 	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
@@ -66,8 +88,6 @@ public class LinkedListDequeTest {
 
 		System.out.println("Running add/remove test.");
 
-		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
 		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
 		// should be empty 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -76,12 +96,13 @@ public class LinkedListDequeTest {
 		// should not be empty 
 		passed = checkEmpty(false, lld1.isEmpty()) && passed;
 
-		lld1.removeFirst();
+		int num = lld1.removeFirst();
 		// should be empty 
 		passed = checkEmpty(true, lld1.isEmpty()) && passed;
+		passed = checkEquals(10, num) && passed;
 
 		printTestStatus(passed);
-		*/
+
 	}
 
 	public static void main(String[] args) {

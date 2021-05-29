@@ -1,6 +1,3 @@
-[submodule "library-fa20"]
-	path = library-fa20
-	url = https://github.com/Berkeley-CS61B/library-fa20
 [submodule "LectureCode"]
 	path = LectureCode
 	url = https://github.com/Berkeley-CS61B/lectureCode-fa20.git
