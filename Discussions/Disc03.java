@@ -34,7 +34,7 @@ class SLList {
     /** Recursively removes all nodes that contain item x. */
     public void removeItem(int x) {
         first = removeItemHelper(x, first);
-        }
+    }
 
     /** Removes all nodes with item x starting at the current IntNode and returns a pointer to the first node in that series. */
     private IntNode removeItemHelper(int x, IntNode current) {
