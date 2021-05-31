@@ -16,7 +16,7 @@
 // 3. Fib
 
 /** Returns the nth Fibonacci number. */
-public class Disc01 {
+public class Fib {
     public static int fib(int n) {
         int current = 0;
         int next = 1;
