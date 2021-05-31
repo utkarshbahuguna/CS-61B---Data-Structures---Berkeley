@@ -39,13 +39,10 @@ public class ArrayDeque<T> {
             newItems = (T[]) new Object[items.length / 2];
         }
 
-        int itemsCopied = 0;
-        if (first > last) {
-            System.arraycopy(items, first, newItems, 0, items.length - first);
-            itemsCopied = items.length - first;
+        for (int i = 0; i < size; i++, first = plusOne(first)) {
+            newItems[i] = items[first];
         }
         first = 0;
-        System.arraycopy(items, first, newItems, itemsCopied, last - first + 1);
         last = size - 1;
         items = newItems;
     }
@@ -96,30 +93,28 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
     public T removeFirst() {
-        if (isEmpty()) { return null;
-        } else {
-            if (needsDownsizing()) { resize("down"); }
-            T firstItem = items[first];
-            items[first] = null;
-            size = size - 1;
-            if (isEmpty()) { first = 0; last = items.length - 1;
-            } else { first = plusOne(first); }
-            return firstItem;
-        }
+        if (needsDownsizing()) { resize("down"); }
+        T firstItem = items[first];
+        items[first] = null;
+        size = Math.max(0, size - 1);
+
+        if (isEmpty()) { first = 0; last = items.length - 1;
+        } else { first = plusOne(first); }
+
+        return firstItem;
     }
 
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
     public T removeLast() {
-        if (isEmpty()) { return null;
-        } else {
-            if (needsDownsizing()) { resize("down"); }
-            T lastItem = items[last];
-            items[last] = null;
-            size = size - 1;
-            if (isEmpty()) { first = 0; last = items.length - 1;
-            } else { last = minusOne(last); }
-            return lastItem;
-        }
+        if (needsDownsizing()) { resize("down"); }
+        T lastItem = items[last];
+        items[last] = null;
+        size = Math.max(0, size - 1);
+
+        if (isEmpty()) { first = 0; last = items.length - 1;
+        } else { last = minusOne(last); }
+
+        return lastItem;
     }
 
     /** Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth. If no such item exists, returns null. */
