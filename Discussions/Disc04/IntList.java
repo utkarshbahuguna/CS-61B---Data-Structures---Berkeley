@@ -1,15 +1,55 @@
-// https://fa20.datastructur.es/materials/discussion/examprep03.pdf
+// From lab2 and Disc03ExamPrep
 
+import java.util.Formatter;
+
+/**
+ * Scheme-like pairs that can be used to form a list of integers.
+ *
+ * @author P. N. Hilfinger, with some modifications by Josh Hug and melaniecebula
+ *         [Do not modify this file.]
+ */
 public class IntList {
+    /**
+     * First element of this IntList.
+     */
     public int first;
+    /**
+     * Remaining elements of this IntList
+     */
     public IntList rest;
 
-    /** A List with first FIRST0 and rest REST0. */
+    /**
+     * A List with first FIRST0 and rest REST0.
+     */
     public IntList(int first0, IntList rest0) {
         first = first0;
         rest = rest0;
     }
 
+    /**
+     * A List with null rest, and first = 0.
+     */
+    public IntList() {
+    /* NOTE: public IntList () { }  would also work. */
+        this(0, null);
+    }
+
+    /** Returns a new IntList containing the ints in ARGS. */
+    public static IntList list(Integer... args) {
+        IntList result, p;
+
+        if (args.length > 0) {
+            result = new IntList(args[0], null);
+        } else {
+            return null;
+        }
+
+        int k;
+        for (k = 1, p = result; k < args.length; k += 1, p = p.rest) {
+            p.rest = new IntList(args[k], null);
+        }
+        return result;
+    }
 
     /**
      * Returns true if X is an IntList containing the same sequence of ints as THIS. */
@@ -32,8 +72,92 @@ public class IntList {
         return true;
     }
 
-    /** Returns a new IntList containing the ints in ARGS. */
-    public static IntList list(Integer... args) {
+    /**
+     * Returns a of equal to L with all elements squared. Destructive.
+     */
+    public static void dSquareList(IntList L) {
+
+        while (L != null) {
+            L.first = L.first * L.first;
+            L = L.rest;
+        }
+    }
+
+    /**
+     * Returns a of equal to L with all elements squared. Non-destructive.
+     */
+    public static IntList squareListIterative(IntList L) {
+        if (L == null) {
+            return null;
+        }
+        IntList res = new IntList(L.first * L.first, null);
+        IntList ptr = res;
+        L = L.rest;
+        while (L != null) {
+            ptr.rest = new IntList(L.first * L.first, null);
+            L = L.rest;
+            ptr = ptr.rest;
+        }
+        return res;
+    }
+
+    /**
+     * Returns a of equal to L with all elements squared. Non-destructive.
+     */
+    public static IntList squareListRecursive(IntList L) {
+        if (L == null) {
+            return null;
+        }
+        return new IntList(L.first * L.first, squareListRecursive(L.rest));
+    }
+
+    /** DO NOT MODIFY ANYTHING ABOVE THIS LINE! */
+
+
+    /**
+     * Returns a of consisting of the elements of A followed by the
+     * *  elements of B.  May modify items of A. Don't use 'new'.
+     */
+
+    public static IntList dcatenate(IntList A, IntList B) {
+        if (A == null) {
+            A = B;
+        } else {
+            A.rest = dcatenate(A.rest, B);
+        }
+        return A;
+    }
+
+    /**
+     * Returns a of consisting of the elements of A followed by the
+     * * elements of B.  May NOT modify items of A.  Use 'new'.
+     */
+    public static IntList catenate(IntList A, IntList B) {
+        if (A == null) {
+            return B;
+        } else {
+            return new IntList(A.first, catenate(A.rest, B));
+        }
+    }
+
+
+    /**
+     * DO NOT MODIFY ANYTHING BELOW THIS LINE! Many of the concepts below here
+     * will be introduced later in the course or feature some form of advanced
+     * trickery which we implemented to help make your life a little easier for
+     * the lab.
+     */
+
+    @Override
+    public int hashCode() {
+        return first;
+    }
+
+    /**
+     * Returns a new IntList containing the ints in ARGS. You are not
+     * expected to read or understand this method.
+     */
+    public static IntList of(Integer... args) {
         IntList result, p;
 
         if (args.length > 0) {
@@ -49,48 +173,67 @@ public class IntList {
         return result;
     }
 
-    /** Keeps the elements in THIS IntList skipping 1 element for the second entry, 2 for the third, 3 for the fourth and so on. */
-    public void skippify() {
-        IntList p = this;
-        int n = 1;
-        while (p != null) {
-            IntList next = p.rest;
-            for (int i = 0; i < n; i++) {
-                if (next == null) {
-                    break;
-                }
-                next = next.rest;
+    /**
+     * If a cycle exists in the IntList, this method
+     * returns an integer equal to the item number of the location where the
+     * cycle is detected.
+     * <p>
+     * If there is no cycle, the number 0 is returned instead. This is a
+     * utility method for lab2. You are not expected to read, understand, or
+     * even use this method. The point of this method is so that if you convert
+     * an IntList into a String and that IntList has a loop, your computer
+     * don't get stuck in an infinite loop.
+     */
+
+    private int detectCycles(IntList A) {
+        IntList tortoise = A;
+        IntList hare = A;
+
+        if (A == null)
+            return 0;
+
+        int cnt = 0;
+
+
+        while (true) {
+            cnt++;
+            if (hare.rest != null)
+                hare = hare.rest.rest;
+            else
+                return 0;
+
+            tortoise = tortoise.rest;
+
+            if (tortoise == null || hare == null)
+                return 0;
+
+            if (hare == tortoise)
+                return cnt;
+        }
+    }
+
+    @Override
+    /** Outputs the IntList as a String. You are not expected to read
+     * or understand this method. */
+    public String toString() {
+        Formatter out = new Formatter();
+        String sep;
+        sep = "(";
+        int cycleLocation = detectCycles(this);
+        int cnt = 0;
+
+        for (IntList p = this; p != null; p = p.rest) {
+            out.format("%s%d", sep, p.first);
+            sep = ", ";
+
+            cnt++;
+            if ((cnt > cycleLocation) && (cycleLocation > 0)) {
+                out.format("... (cycle exists) ...");
+                break;
             }
-            p.rest = next;
-            p = next;
-            n += 1;
         }
-    }
-
-    /** Destructively changes the ordering of a given IntList so that even indexed links precede odd indexed links. */
-    public static void evenOdd(IntList lst) {
-        if (lst == null || lst.rest == null || lst.rest.rest == null) {
-            return;
-        }
-        IntList second = lst.rest;
-        int index = 0;
-        while (!(index % 2 == 0 && (lst.rest == null || lst.rest.rest == null))) {
-            IntList temp = lst.rest;
-            lst.rest = lst.rest.rest;
-            lst = temp;
-            index += 1;
-        }
-        lst.rest = second;
-    }
-
-    public static void main(String[] args) {
-        IntList a = IntList.list(1, 2, 3, 4);
-        IntList b = IntList.list(9, 8, 7, 6, 5);
-//        a.skippify();
-//        b.skippify();
-        IntList.evenOdd(a);
-        System.out.println(a.equals(IntList.list(1, 3, 2, 4)));
-        IntList.evenOdd(b);
-        System.out.println(b.equals(IntList.list(9, 7, 5, 8, 6)));
+        out.format(")");
+        return out.toString();
     }
 }
+
