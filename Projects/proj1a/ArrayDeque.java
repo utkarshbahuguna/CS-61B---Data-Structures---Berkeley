@@ -29,16 +29,11 @@ public class ArrayDeque<T> {
         } else { return i + 1; }
     }
 
-    /** Creates a new array double in size of the items array and copies elements of items from first to last at the beginning of the new array.
+    /** Creates a new array of capacity and copies elements of items from first to last at the beginning of the new array.
      * Sets items equal to this new array. */
-    private void resize(String upOrDown) {
-        T[] newItems;
-        if (upOrDown.toLowerCase() == "up") {
-            newItems = (T[]) new Object[items.length * 2];
-        } else {
-            newItems = (T[]) new Object[items.length / 2];
-        }
-
+    private void resize(int capacity) {
+        newItems = (T[]) new Object[capacity];
+        
         for (int i = 0; i < size; i++, first = plusOne(first)) {
             newItems[i] = items[first];
         }
@@ -76,7 +71,7 @@ public class ArrayDeque<T> {
 
     /** Adds an item of type T to the front of the deque. */
     public void addFirst(T item) {
-        if (size == items.length) { resize("up"); }
+        if (size == items.length) { resize(size * 2); }
         first = minusOne(first);
         items[first] =  item;
         size = size + 1;
@@ -84,7 +79,7 @@ public class ArrayDeque<T> {
 
     /** Adds an item of type T to the back of the deque. */
     public void addLast(T item) {
-        if (size == items.length) { resize("up"); }
+        if (size == items.length) { resize(size * 2); }
         last = plusOne(last);
         items[last] = item;
         size = size + 1;
@@ -93,7 +88,7 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
     public T removeFirst() {
-        if (needsDownsizing()) { resize("down"); }
+        if (needsDownsizing()) { resize(size / 2); }
         T firstItem = items[first];
         items[first] = null;
         size = Math.max(0, size - 1);
@@ -106,7 +101,7 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
     public T removeLast() {
-        if (needsDownsizing()) { resize("down"); }
+        if (needsDownsizing()) { resize(size / 2); }
         T lastItem = items[last];
         items[last] = null;
         size = Math.max(0, size - 1);
