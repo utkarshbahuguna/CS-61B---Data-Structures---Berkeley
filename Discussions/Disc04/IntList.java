@@ -1,5 +1,7 @@
 // From lab2 and Disc03ExamPrep
 
+package Disc04;
+
 import java.util.Formatter;
 
 /**

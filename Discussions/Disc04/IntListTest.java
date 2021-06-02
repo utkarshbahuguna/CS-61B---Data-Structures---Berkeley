@@ -2,6 +2,7 @@
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import Disc04.IntList;
 
 public class IntListTest {
 
