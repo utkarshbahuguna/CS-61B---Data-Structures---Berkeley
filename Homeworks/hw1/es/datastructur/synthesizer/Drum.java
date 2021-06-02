@@ -1,18 +1,16 @@
 package es.datastructur.synthesizer;
 
-//Note: This file will not compile until you complete task 1 (BoundedQueue).
-public class GuitarString {
-    /** Constants. Do not change. In case you're curious, the keyword final
-     * means the values cannot be changed at runtime. We'll discuss this and
-     * other topics in lecture on Friday. */
+import edu.princeton.cs.algs4.StdRandom;
+
+public class Drum {
     private static final int SR = 44100;      // Sampling Rate
-    private static final double DECAY = .996; // energy decay factor
+    private static final double DECAY = 1.0; // energy decay factor
 
     /* Buffer for storing sound data. */
     private BoundedQueue<Double> buffer;
 
     /* Create a guitar string of the given frequency.  */
-    public GuitarString(double frequency) {
+    public Drum(double frequency) {
         buffer = new ArrayRingBuffer<>((int) Math.round(SR / frequency));
         for(int i = 0; i < buffer.capacity(); i++) {
             buffer.enqueue(0.0);
@@ -36,6 +34,10 @@ public class GuitarString {
     public void tic() {
         double front = buffer.dequeue();
         double newDouble = (front + buffer.peek()) / 2 * DECAY;
+        if(StdRandom.uniform() < 0.5) {
+            newDouble = -newDouble;
+        }
+
         buffer.enqueue(newDouble);
     }
 
