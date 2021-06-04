@@ -11,6 +11,9 @@ public class WeightedQuickUnionwPathCompression {
      */
     public WeightedQuickUnionwPathCompression(int n) {
         id = new int[n];
+        for(int i = 0; i < n; i++) {
+            id[i] = -1;
+        }
     }
 
     /** Retruns the index of the root parent of i. */
@@ -19,7 +22,7 @@ public class WeightedQuickUnionwPathCompression {
         int root = i;
 
         /** While root is not a root node. */
-        while(id[root] > 0) {
+        while(id[root] > -1) {
             /** Change root to it's parent node. */
             root = id[root];
         }
