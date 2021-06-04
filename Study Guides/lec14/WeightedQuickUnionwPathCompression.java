@@ -18,7 +18,6 @@ public class WeightedQuickUnionwPathCompression {
 
     /** Retruns the index of the root parent of i. */
     private int find(int i) {
-        /** List of nodes found along the way to the root. */
         int root = i;
 
         /** While root is not a root node. */
