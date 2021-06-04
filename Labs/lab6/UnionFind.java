@@ -25,6 +25,7 @@ public class UnionFind {
 
     /* Returns the size of the set v1 belongs to. */
     public int sizeOf(int v1) {
+        validate(v1);
         int root = find(v1);
         return -1 * parent[root];
     }
@@ -32,11 +33,14 @@ public class UnionFind {
     /* Returns the parent of v1. If v1 is the root of a tree, returns the
        negative size of the tree for which v1 is the root. */
     public int parent(int v1) {
+        validate(v1);
         return parent[v1];
     }
 
     /* Returns true if nodes v1 and v2 are connected. */
     public boolean isConnected(int v1, int v2) {
+        validate(v1);
+        validate(v2);
         return find(v1) == find(v2);
     }
 
@@ -46,6 +50,8 @@ public class UnionFind {
        vertex with itself or vertices that are already connected should not 
        change the sets but may alter the internal structure of the data. */
     public void connect(int v1, int v2) {
+        validate(v1);
+        validate(v2);
         if (isConnected(v1, v2)) { return; }
 
         int root_v1 = find(v1);
@@ -67,6 +73,7 @@ public class UnionFind {
     /* Returns the root of the set v1 belongs to. Path-compression is employed
        allowing for fast search-time. */
     public int find(int v1) {
+        validate(v1);
         int root = v1;
 
         /** While root is not a root node. */
