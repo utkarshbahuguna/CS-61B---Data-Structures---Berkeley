@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 public class Percolation {
     private WeightedQuickUnionUF grid;
-    private HashMap sites;
+    private int[] sites;
     private int N;
     private int openSites;
     boolean percolates;
@@ -20,7 +20,10 @@ public class Percolation {
         this.N = N;
         openSites = 0;
         grid = new WeightedQuickUnionUF(N * N);
-        sites = new HashMap<Integer, Integer>();
+        sites = new int[N * N];
+        for (int i = 0; i < N * N; i++) {
+            sites[i] = -1;
+        }
         percolates = false;
     }
 
@@ -46,9 +49,9 @@ public class Percolation {
 
         int self = linearAddress(row, col);
 
-        if (row == 0) { sites.put(self, 1);
-        } else if (row == N -1) { sites.put(self, 2);
-        } else { sites.put(self, 0); }
+        if (row == 0) { sites[self] = 1;
+        } else if (row == N -1) { sites[self] = 2;
+        } else { sites[self] = 0; }
 
         openSites += 1;
         for (int i = -1; i <= 1; i = i+1) {
@@ -59,16 +62,13 @@ public class Percolation {
                     int neighborComponent = grid.find(neighbor);
 
                     grid.union(self, neighbor);
+                    int newValue = (sites[selfComponent] == sites[neighborComponent]) ?
+                                    sites[selfComponent] :
+                                    Math.min(3, sites[selfComponent] + sites[neighborComponent]);
 
-                    int newValue;
-                    int selfValue = (int) sites.get(selfComponent);
-                    int neighborValue = (int) sites.get(neighborComponent);
+                    sites[grid.find(self)] = newValue;
 
-                    newValue = (selfValue == neighborValue) ? selfValue : Math.min(3, selfValue + neighborValue);
-
-                    sites.put(grid.find(self), newValue);
-
-                    if ((int) sites.get(grid.find(self)) == 3) {
+                    if (newValue == 3) {
                         percolates = true;
                     }
                 }
@@ -86,7 +86,7 @@ public class Percolation {
         if(!valid(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        return sites.containsKey(linearAddress(row, col));
+        return sites[linearAddress(row, col)] != -1;
     }
 
     // is the site (row, col) full?
@@ -94,7 +94,7 @@ public class Percolation {
         if(!valid(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        int state = (int) sites.getOrDefault(grid.find(linearAddress(row, col)), 0);
+        int state = sites[grid.find(linearAddress(row, col))];
         return state == 1 || state == 3;
     }
 
@@ -106,19 +106,11 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates() {
         return percolates;
-//        for (int j = 0; j < N; j++) {
-//            if (isOpen(N - 1, j)) {
-//                return (boolean) sites.getOrDefault(grid.find(linearAddress(N-1, j)), false);
-//                }
-//            }
-//        return false;
     }
 
     public static void main(String[] args) {
         Percolation p = new Percolation(10);
         p.open(0, 4);
         p.open(1, 4);
-
     }
-
 }
