@@ -2,9 +2,7 @@
 
 import edu.princeton.cs.algs4.BST;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private class Node<K, V> {
@@ -129,37 +127,37 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     /** Returns the node with minimum key in the BST rooted at root node. Returns null if tree is empty.*/
-    private Node<K, V> minBST(Node<K, V> root) {
+    private K minBST(Node<K, V> root) {
         if (root == null) {
             return null;
         }
         while (root.left != null) {
             root = root.left;
         }
-        return root;
+        return root.key;
     }
 
-    /** Returns the node with maximum key in the BST rooted at node root. Returns null if tree is empty.*/
-    private Node<K, V> maxBST(Node<K, V> root) {
+    /** Returns maximum key in the BST rooted at node root. Returns null if tree is empty.*/
+    private K maxBST(Node<K, V> root) {
         if (root == null) {
             return null;
         }
         while (root.right != null) {
             root = root.right;
         }
-        return root;
+        return root.key;
     }
 
-    /** Returns the node whose key is the predecessor of the key of node x. */
-    private Node<K, V> predecessor(Node<K, V> x) {
+    /** Returns key which is the predecessor of the key of node x. If no predecessor exist, return null. */
+    private K predecessor(Node<K, V> x) {
         if (x == null) {
             return null;
         }
         return maxBST(x.left);
     }
 
-    /** Returns the node whose key is the predecessor of the key of node x. */
-    private Node<K, V> succecessor(Node<K, V> x) {
+    /** Returns the key which is the predecessor of the key of node x. If no successor exists, return null. */
+    private K succecessor(Node<K, V> x) {
         if (x == null) {
             return null;
         }
@@ -168,13 +166,41 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     /** Removes key from the BST rooted at node root and returns the root. */
     private Node<K, V> removeKey(K key, Node<K, V> root) {
-        return null;
+        if (root == null) {
+            return null;
+        }
+
+        int cmp = key.compareTo(root.key);
+        if (cmp < 0) {
+            root.left = removeKey(key, root.left);
+        } else if (cmp > 0) {
+            root.right = removeKey(key, root.right);
+        }
+
+        // Root node key is equal to the key to be removed.
+        else {
+            if (root.left == null) {
+                return root.right;
+            } else if (root.right == null) {
+                return root.left;
+            } else {
+                K predecessor = predecessor(root);
+                root.key = predecessor;
+                root.left = removeKey(predecessor, root.left);
+            }
+        }
+        return root;
     }
 
     /* Removes the mapping for the specified key from this map if present. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        V value = get(key);
+        if (value != null) {
+            size -= 1;
+            root = removeKey(key, root);
+        }
+        return value;
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -182,11 +208,54 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        V val = get(key);
+        if (val != null && val == value) {
+            size -= 1;
+            removeKey(key, root);
+        }
+        return value;
+    }
+
+    private class BSTIterator<K> implements Iterator<K> {
+        private List<Node<K, V>> stack;
+
+        /** Creats a BST Iterator for a BST rooted at node root. */
+        public BSTIterator(Node root) {
+            stack = new ArrayList<>();
+            pushToStack(root);
+        }
+
+        /** Push all elements on the left edge of the tree rooted at node root on to the stack. */
+        private void pushToStack(Node<K, V> root) {
+            while(root != null) {
+                stack.add(root);
+                root = root.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return stack.size() != 0;
+        }
+
+        @Override
+        public K next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Node<K, V> next = stack.remove(stack.size() - 1);
+            pushToStack(next.right);
+            return next.key;
+        }
     }
 
     @Override
     public Iterator<K> iterator() {
-        return keySet().iterator();
+        return new BSTIterator<>(root);
     }
+
+    public static void main(String[] args) {
+
+    }
+
 }

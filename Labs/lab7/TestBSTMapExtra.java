@@ -111,6 +111,23 @@ public class TestBSTMapExtra {
         assertEquals(null, noChild.get('Z'));
     }
 
+
+    @Test
+    public void testIterator() {
+        BSTMap<String,String> q = new BSTMap<String,String>();
+        q.put("c","a");
+        q.put("b","a");
+        q.put("a","a");
+        q.put("d","a");
+        q.put("e","a");
+        String all = "abcde";
+        int i = 0;
+        for(String s : q) {
+            assertEquals(Character.toString(all.charAt(i)), s);
+            i += 1;
+        }
+    }
+
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestBSTMapExtra.class);
     }
