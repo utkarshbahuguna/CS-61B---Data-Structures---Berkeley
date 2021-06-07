@@ -57,7 +57,10 @@ public class PercolationStats {
     }
 
     public static void main(String[] args) {
-        PercolationStats ps = new PercolationStats(20, 1000, new PercolationFactory());
-        System.out.println(ps.mean());
+        PercolationStats ps = new PercolationStats(20, 2000, new PercolationFactory());
+        System.out.println(String.format("Mean: %2.2f%%", (ps.mean() * 100)));
+        System.out.println(String.format("Stddev: %2.2f%%", (ps.stddev() * 100)));
+        System.out.println(String.format("%2.2f%%", (ps.confidenceLow() * 100)));
+        System.out.println(String.format("%2.2f%%", (ps.confidenceHigh() * 100)));
     }
 }
