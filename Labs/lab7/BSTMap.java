@@ -195,12 +195,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Removes the mapping for the specified key from this map if present. */
     @Override
     public V remove(K key) {
-        V value = get(key);
-        if (value != null) {
-            size -= 1;
-            root = removeKey(key, root);
-        }
-        return value;
+        return remove(key, get(key));
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -208,12 +203,13 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key, V value) {
-        V val = get(key);
-        if (val != null && val == value) {
+        Node<K, V> n = search(key, root);
+        if (n != null && n.value == value) {
             size -= 1;
-            removeKey(key, root);
+            root = removeKey(key, root);
+            return n.value;
         }
-        return value;
+        return null;
     }
 
     private class BSTIterator<K> implements Iterator<K> {
