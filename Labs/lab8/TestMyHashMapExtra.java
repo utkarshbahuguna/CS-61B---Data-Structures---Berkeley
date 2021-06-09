@@ -47,6 +47,10 @@ public class TestMyHashMapExtra {
         assertTrue(q.containsKey("a"));
         assertTrue(q.containsKey("b"));
         assertTrue(q.containsKey("f"));
+        assertTrue("a" == q.remove("b", "c"));     // a b f
+        assertTrue(q.containsKey("b"));
+        assertTrue("a" == q.remove("b", "a"));
+        assertFalse(q.containsKey("b"));
     }
 
     public static void main(String[] args) {
