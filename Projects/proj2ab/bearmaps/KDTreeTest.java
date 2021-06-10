@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.DoubleStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,6 +28,9 @@ public class KDTreeTest {
 
     /** Create a list of n randomly generated points with given x and y ranges. */
     private List<Point> createPoints(int n, double minX, double maxX, double minY, double maxY) {
+        Random rand = new Random();
+        DoubleStream Xs = rand.doubles(minX, maxX);
+        DoubleStream Ys = rand.doubles(minX, maxX);
         List<Point> points = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             points.add(new Point(StdRandom.uniform(minX, maxX), StdRandom.uniform(minY, maxY)));
@@ -37,16 +42,32 @@ public class KDTreeTest {
         return createPoints(n, -1000, 1000, -1000, 1000);
     }
 
-    public void testTiming() {
+    public void testTimingKDTConstruction() {
         List<Integer> numPoints = new ArrayList<>();
         List<Double> KDTTimes = new ArrayList<>();
-        List<Double> NPSTimes = new ArrayList<>();
-        int queries = 10000;
+        List<Integer> ops = new ArrayList<>();
+
+        for (int i = 1; i <= 1024; i = i * 2) {
+            numPoints.add(i * 1000);
+            List<Point> points = createPoints(i * 1000);
+            Stopwatch sw = new Stopwatch();
+            KDTree kdt = new KDTree(points);
+            KDTTimes.add(sw.elapsedTime());
+            ops.add(i * 1000);
+        }
+        System.out.println("Timing Table for KDTree Construction");
+        printTimingTable(numPoints, ops, KDTTimes);
+    }
+
+    public void testTimingKDTNearest() {
+        List<Integer> numPoints = new ArrayList<>();
+        List<Double> KDTTimes = new ArrayList<>();
+        List<Integer> ops = new ArrayList<>();
+        int queries = 500000;
         List<Point> pins = createPoints(queries);
 
-        for (int i = 1; i <= 64; i = i * 2) {
+        for (int i = 1; i <= 1024; i = i * 2) {
             numPoints.add(i * 1000);
-
             List<Point> points = createPoints(i * 1000);
             NaivePointSet nps = new NaivePointSet(points);
             KDTree kdt = new KDTree(points);
@@ -56,31 +77,51 @@ public class KDTreeTest {
                 kdt.nearest(pin.getX(), pin.getY());
             }
             KDTTimes.add(sw.elapsedTime());
+            ops.add(queries);
+        }
+        System.out.println("Timing Table for KDTree Nearest");
+        printTimingTable(numPoints, ops, KDTTimes);
+    }
 
-            Stopwatch sw2 = new Stopwatch();
+    public void testTimingNPSNearest() {
+        List<Integer> numPoints = new ArrayList<>();
+        List<Double> NPSTimes = new ArrayList<>();
+        List<Integer> ops = new ArrayList<>();
+        int queries = 500000;
+        List<Point> pins = createPoints(queries);
+
+        for (int i = 1; i <= 16; i = i * 2) {
+            numPoints.add(i * 100);
+            List<Point> points = createPoints(i * 100);
+            NaivePointSet nps = new NaivePointSet(points);
+
+            Stopwatch sw = new Stopwatch();
             for (Point pin : pins) {
                 nps.nearest(pin.getX(), pin.getY());
             }
-            NPSTimes.add(sw2.elapsedTime());
+            NPSTimes.add(sw.elapsedTime());
+            ops.add(queries);
         }
-        printTimingTable(numPoints, queries, NPSTimes, KDTTimes);
+        System.out.println("Timing Table for Naive Point Set Nearest");
+        printTimingTable(numPoints, ops, NPSTimes);
     }
 
-    private static void printTimingTable(List<Integer> numPoints, int queries, List<Double> NPSTimes, List<Double> KDTTimes) {
-        System.out.printf("%20s %20s %20s %20s %20s %20s\n", "No. of Points", "# queries", "NPS (s)", "NPS microsec/query", "KDT (s)" , "KDT microsec/query");
-        System.out.printf("-------------------------------------------------------------------------------------------------------------------------------\n");
+    private static void printTimingTable(List<Integer> numPoints, List<Integer> ops, List<Double> times) {
+        System.out.printf("%20s %20s %20s %20s\n", "No. of Points", "# ops", "Time (s)", "microsec/query");
+        System.out.printf("--------------------------------------------------------------------------------------------\n");
         for (int i = 0; i < numPoints.size(); i += 1) {
             int N = numPoints.get(i);
-            double NPSTime = NPSTimes.get(i);
-            double KDTTime = KDTTimes.get(i);
-            double NPStimePerQuery = NPSTime / queries * 1e6;
-            double KDTtimePerQuery = KDTTime / queries * 1e6;
-            System.out.printf("%20d % 20d %20.2f %20.2f %20.2f %20.2f\n", N, queries, NPSTime, NPStimePerQuery, KDTTime, KDTtimePerQuery);
+            int op = ops.get(i);
+            double time = times.get(i);
+            double timePerQuery = time / op * 1e6;
+            System.out.printf("%20d % 20d %20.2f %20.2f\n", N, op, time, timePerQuery);
         }
     }
 
     public static void main(String[] args) {
         KDTreeTest kdtest = new KDTreeTest();
-        kdtest.testTiming();
+//        kdtest.testTimingNPSNearest();
+//        kdtest.testTimingKDTNearest();
+        kdtest.testTimingKDTConstruction();
     }
 }
